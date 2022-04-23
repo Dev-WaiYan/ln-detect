@@ -1,0 +1,10 @@
+.table {
+  border: solid;
+  margin-top: 100px;
+  width: 100%;
+}
+
+.table th,
+.table td {
+  border: solid;
+}

@@ -1,0 +1,14 @@
+.container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 3;
+}
+
+.alert {
+  width: 170px;
+  padding: 5px;
+  text-align: center;
+  color: #fff;
+  border-radius: 10px;
+}

@@ -1,11 +1,18 @@
+import axios from "axios";
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import apiEndPoints from "../../api/apiEndpoints";
 import Button from "../../components/button/Button";
+import { API_BASE_ENDPOINT } from "../../constants/api";
 import Form from "./Form";
 import styles from "./Signup_Login.module.css";
 
 function Signup() {
+  const navigate = useNavigate();
+
   // Local state - Start
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [inputs, setInputs] = useState({
     username: "",
     password: "",
@@ -13,17 +20,43 @@ function Signup() {
   // Local state - End
 
   // Handler - Start
-  const signup = () => {};
+  const signup = () => {
+    setError("");
+    if (inputs.username.trim() && inputs.password.trim()) {
+      axios
+        .post(`${API_BASE_ENDPOINT}${apiEndPoints.signup}`, {
+          username: inputs.username,
+          password: inputs.password,
+        })
+        .then((res) => {
+          if (res.data.created) {
+            setSuccess(
+              "Account is created. Will redirect to login soon. Please login with new account."
+            );
+            setTimeout(() => {
+              navigate("/login");
+            }, [3000]);
+          } else {
+            setError("Signup fails. Try again with new username.");
+          }
+        })
+        .catch((err) => console.log(err));
+    } else {
+      setError("Username or Password requires.");
+    }
+  };
   // Handler - End
 
   return (
     <div className={styles.container}>
-      <div>
+      <div className={styles.form}>
         <Form inputs={inputs} setInputs={setInputs} />
         <div className={styles.actionBtns}>
           <Button onClick={signup}>SIGNUP</Button>
-          <Link to="/signup">Login</Link>
+          <Link to="/login">Login</Link>
         </div>
+        {error && <p className={styles.error}>{error}</p>}
+        {success && <p className={styles.success}>{success}</p>}
       </div>
     </div>
   );

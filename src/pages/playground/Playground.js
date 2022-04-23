@@ -1,8 +1,17 @@
 import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import apiConfig from "../../api/apiConfig";
+import apiEndPoints from "../../api/apiEndpoints";
+import Alert from "../../components/alert/Alert";
 import Button from "../../components/button/Button";
+import Header from "../../components/header/Header";
 import Input from "../../components/input/Input";
 import { SUPPORT_LANGUAGES } from "../../constants/lang";
+import { TO_RECORD_HISTORY } from "../../constants/store";
+import useErrorHandler from "../../error/useErrorHandler";
+import { addRecordHistory } from "../../redux/slices/userSlice";
+import store from "../../store/store";
 import {
   checkCharacterCount,
   checkWordCount,
@@ -12,13 +21,22 @@ import styles from "./Playground.module.css";
 
 function Playground() {
   const navigate = useNavigate();
+  const { handleError } = useErrorHandler();
+
+  // Redux - Start
+  const user = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  // Redux - End
 
   // Local state - Start
-  const [input, setInput] = useState({
+  const [success, setSuccess] = useState("");
+  const [error, setError] = useState("");
+  const defaultInput = {
     value: "",
     characterCount: 0,
     wordCount: 0,
-  });
+  };
+  const [input, setInput] = useState(defaultInput);
 
   const [detectedLanguages, setDetectedLanguages] = useState([]);
   const [decision, setDecision] = useState("");
@@ -29,6 +47,21 @@ function Playground() {
     const langs = detectLanguages(input.value);
     setDetectedLanguages(langs);
   }, [input.value]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setError("");
+      setSuccess("");
+    }, 3000);
+  }, [success, error]);
+
+  useEffect(() => {
+    const toRecordHistory = JSON.parse(store.getItem(TO_RECORD_HISTORY));
+    if (toRecordHistory) {
+      recordHistory(toRecordHistory);
+      store.removeItem(TO_RECORD_HISTORY);
+    }
+  }, [user.authToken]);
   // Effect - End
 
   // Handler - Start
@@ -92,12 +125,42 @@ function Playground() {
     recordHistory();
   };
 
-  const recordHistory = () => {
-    const authToken = localStorage.getItem("auth_token");
-    if (authToken) {
-      // Goto record api
+  const recordHistory = (toRecordHistory) => {
+    let payload = toRecordHistory
+      ? {
+          characterCount: toRecordHistory.characterCount,
+          wordCount: toRecordHistory.wordCount,
+          inputString: toRecordHistory.value,
+          detectedLanguages: toRecordHistory.detectedLanguages,
+        }
+      : {
+          characterCount: input.characterCount,
+          wordCount: input.wordCount,
+          inputString: input.value,
+          detectedLanguages: detectedLanguages,
+        };
+
+    if (user.authToken) {
+      apiConfig
+        .getApiInstance()
+        .post(apiEndPoints.recordHistory, payload)
+        .then((res) => {
+          console.log("record", res.data.recordHistory);
+          dispatch(addRecordHistory(res.data.recordHistory));
+          setSuccess("New history is recorded.");
+          setInput(defaultInput);
+          setDecision("");
+          setDetectedLanguages([]);
+        })
+        .catch((err) => {
+          setError("Something went wrong.");
+          handleError(err);
+        });
     } else {
-      localStorage.setItem("toRecordHistory", input);
+      store.setItem(
+        TO_RECORD_HISTORY,
+        JSON.stringify({ input: input, detectedLanguages: detectedLanguages })
+      );
       navigate("/login");
     }
   };
@@ -110,43 +173,47 @@ function Playground() {
       return true;
     }
   };
-
   // Utils - End
 
   return (
-    <div className={styles.container}>
-      <div className={styles.playground}>
-        <div className={styles.row}>
-          <Input
-            value={input.value}
-            onChange={onChange}
-            placeholder="You can type anything here."
-          />
-        </div>
-        <div className={styles.row}>
-          <h5>Count</h5>
-          <div className={styles.count}>
-            <span>
-              Character : <i>{input.characterCount}</i>
-            </span>
-            <span>
-              Word : <i>{input.wordCount}</i>
-            </span>
+    <>
+      {success && <Alert text={success} type="success" />}
+      {error && <Alert text={error} type="error" />}
+      <Header />
+      <div className={styles.container}>
+        <div className={styles.playground}>
+          <div className={styles.row}>
+            <Input
+              value={input.value}
+              onChange={onChange}
+              placeholder="You can type anything here."
+            />
+          </div>
+          <div className={styles.row}>
+            <h5>Count</h5>
+            <div className={styles.count}>
+              <span>
+                Character : <i>{input.characterCount}</i>
+              </span>
+              <span>
+                Word : <i>{input.wordCount}</i>
+              </span>
+            </div>
+          </div>
+
+          <div className={styles.actionBtns}>
+            <Button onClick={check}>Check</Button>
+            <Button onClick={checkAndRecord}>Check and Record</Button>
+          </div>
+
+          {getSupportLanguages()}
+
+          <div className={styles.row}>
+            <p className={styles.decision}>{decision}</p>
           </div>
         </div>
-
-        <div className={styles.actionBtns}>
-          <Button onClick={check}>Check</Button>
-          <Button onClick={checkAndRecord}>Check and Record</Button>
-        </div>
-
-        {getSupportLanguages()}
-
-        <div className={styles.row}>
-          <p className={styles.decision}>{decision}</p>
-        </div>
       </div>
-    </div>
+    </>
   );
 }
 

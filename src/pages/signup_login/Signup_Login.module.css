@@ -5,6 +5,10 @@
   min-height: 70vh;
 }
 
+.form {
+  width: 300px;
+}
+
 .actionBtns {
   display: flex;
   justify-content: flex-end;
@@ -14,4 +18,14 @@
 
 .actionBtns button {
   margin-right: 20px;
+}
+
+.error {
+  color: rgba(207, 19, 19, 0.87);
+  text-align: center;
+}
+
+.success {
+  color: rgba(56, 139, 7, 0.87);
+  text-align: center;
 }

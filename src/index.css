@@ -16,3 +16,11 @@ code {
 .warning {
   color: rgb(179, 118, 6);
 }
+
+.error {
+  color: rgba(207, 19, 19, 0.87);
+}
+
+.success {
+  color: rgba(56, 139, 7, 0.87);
+}

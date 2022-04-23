@@ -1,8 +1,15 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import Input from "../../components/input/Input";
 import styles from "./Form.module.css";
 
 function Form({ inputs, setInputs }) {
+  const navigate = useNavigate();
+  // Redux - Start
+  const user = useSelector((state) => state.user);
+  // Redux - End
+
   // Handler - Start
   const onChange = (e) => {
     setInputs({
@@ -11,6 +18,14 @@ function Form({ inputs, setInputs }) {
     });
   };
   // Handler - End
+
+  // Effect - Start
+  useEffect(() => {
+    if (user.authToken) {
+      navigate("/");
+    }
+  }, [user.authToken]);
+  // Effect - End
 
   return (
     <div>
