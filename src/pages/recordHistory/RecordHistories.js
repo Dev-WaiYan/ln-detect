@@ -12,22 +12,26 @@ function RecordHistories() {
     <>
       <Header />
       <table className={styles.table}>
-        <tr>
-          <th>No</th>
-          <th>Character</th>
-          <th>Word</th>
-          <th>Text</th>
-          <th>Detected Languages</th>
-        </tr>
-        {user.recordHistories.map((record) => (
-          <tr key={record.id}>
-            <td>{record.id}</td>
-            <td>{record.character_count}</td>
-            <td>{record.word_count}</td>
-            <td>{record.input_string}</td>
-            <td>{record.detected_languages.map((lang) => lang + ", ")}</td>
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Character</th>
+            <th>Word</th>
+            <th>Text</th>
+            <th>Detected Languages</th>
           </tr>
-        ))}
+        </thead>
+        <tbody>
+          {user.recordHistories.map((record) => (
+            <tr key={record.id}>
+              <td>{record.id}</td>
+              <td>{record.character_count}</td>
+              <td>{record.word_count}</td>
+              <td>{record.input_string}</td>
+              <td>{record.detected_languages.map((lang) => lang + ", ")}</td>
+            </tr>
+          ))}
+        </tbody>
       </table>
     </>
   );

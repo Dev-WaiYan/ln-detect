@@ -57,6 +57,9 @@ function Playground() {
 
   useEffect(() => {
     const toRecordHistory = JSON.parse(store.getItem(TO_RECORD_HISTORY));
+
+    console.log("toRecord", toRecordHistory);
+
     if (toRecordHistory) {
       recordHistory(toRecordHistory);
       store.removeItem(TO_RECORD_HISTORY);
@@ -128,9 +131,9 @@ function Playground() {
   const recordHistory = (toRecordHistory) => {
     let payload = toRecordHistory
       ? {
-          characterCount: toRecordHistory.characterCount,
-          wordCount: toRecordHistory.wordCount,
-          inputString: toRecordHistory.value,
+          characterCount: toRecordHistory.input.characterCount,
+          wordCount: toRecordHistory.input.wordCount,
+          inputString: toRecordHistory.input.value,
           detectedLanguages: toRecordHistory.detectedLanguages,
         }
       : {
@@ -145,7 +148,7 @@ function Playground() {
         .getApiInstance()
         .post(apiEndPoints.recordHistory, payload)
         .then((res) => {
-          console.log("record", res.data.recordHistory);
+          console.log("record", res);
           dispatch(addRecordHistory(res.data.recordHistory));
           setSuccess("New history is recorded.");
           setInput(defaultInput);
