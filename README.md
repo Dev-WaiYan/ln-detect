@@ -3,3 +3,5 @@ This is coding test for MYEO. In this repo, our program will detect which langua
 
 # Info
 There is currently three branches - **main**, **frontend-web**, **backend**. **"frontend-web"** is responsible for UI/UX. **"backend"** is responsible for **API** services.
+
+[View App Demo](https://wavycurvy.com)
