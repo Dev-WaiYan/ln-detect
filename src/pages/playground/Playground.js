@@ -58,12 +58,11 @@ function Playground() {
   useEffect(() => {
     const toRecordHistory = JSON.parse(store.getItem(TO_RECORD_HISTORY));
 
-    console.log("toRecord", toRecordHistory);
-
     if (toRecordHistory) {
       recordHistory(toRecordHistory);
       store.removeItem(TO_RECORD_HISTORY);
     }
+    // eslint-disable-next-line
   }, [user.authToken]);
   // Effect - End
 
@@ -148,7 +147,6 @@ function Playground() {
         .getApiInstance()
         .post(apiEndPoints.recordHistory, payload)
         .then((res) => {
-          console.log("record", res);
           dispatch(addRecordHistory(res.data.recordHistory));
           setSuccess("New history is recorded.");
           setInput(defaultInput);

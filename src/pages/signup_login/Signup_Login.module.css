@@ -11,13 +11,17 @@
 
 .actionBtns {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   align-items: center;
-  margin: 20px 0;
 }
 
 .actionBtns button {
   margin-right: 20px;
+}
+
+.messageContainer {
+  min-height: 50px;
+  margin: 20px 0;
 }
 
 .error {

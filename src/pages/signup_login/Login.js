@@ -58,10 +58,13 @@ function Login() {
       <div className={styles.form}>
         <Form inputs={inputs} setInputs={setInputs} />
         <div className={styles.actionBtns}>
+          <Button onClick={() => navigate("/")}>GUEST</Button>
           <Button onClick={login}>LOGIN</Button>
           <Link to="/signup">Signup</Link>
         </div>
-        {error && <p className={styles.error}>{error}</p>}
+        <div className={styles.messageContainer}>
+          {error && <p className={styles.error}>{error}</p>}
+        </div>
       </div>
     </div>
   );

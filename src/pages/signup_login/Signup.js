@@ -52,11 +52,14 @@ function Signup() {
       <div className={styles.form}>
         <Form inputs={inputs} setInputs={setInputs} />
         <div className={styles.actionBtns}>
+          <Button onClick={() => navigate("/")}>GUEST</Button>
           <Button onClick={signup}>SIGNUP</Button>
           <Link to="/login">Login</Link>
         </div>
-        {error && <p className={styles.error}>{error}</p>}
-        {success && <p className={styles.success}>{success}</p>}
+        <div className={styles.messageContainer}>
+          {error && <p className={styles.error}>{error}</p>}
+          {success && <p className={styles.success}>{success}</p>}
+        </div>
       </div>
     </div>
   );

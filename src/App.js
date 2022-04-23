@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import apiConfig from "./api/apiConfig";
 import apiEndPoints from "./api/apiEndpoints";
 import Footer from "./components/footer/Footer";
@@ -14,6 +14,7 @@ import { setAuthUser, setRecordHistories } from "./redux/slices/userSlice";
 import store from "./store/store";
 
 function App() {
+  const navigate = useNavigate();
   const { handleError } = useErrorHandler();
 
   // Redux - Start
@@ -26,7 +27,10 @@ function App() {
     const existingToken = store.getItem(AUTH_TOKEN);
     if (existingToken) {
       dispatch(setAuthUser(existingToken));
+    } else {
+      navigate("/");
     }
+    // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
@@ -42,11 +46,12 @@ function App() {
         })
         .catch((err) => handleError(err));
     }
+    // eslint-disable-next-line
   }, [user.authToken]);
   // Effect - End
 
   return (
-    <BrowserRouter>
+    <>
       <Routes>
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
@@ -55,7 +60,7 @@ function App() {
       </Routes>
 
       <Footer />
-    </BrowserRouter>
+    </>
   );
 }
 
