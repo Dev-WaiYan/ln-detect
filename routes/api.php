@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\RecordHistoryController;
+use App\Http\Controllers\UserController;
+use App\Http\Middleware\EnsureUserRequestIsValid;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,6 +17,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// No middleware routes
+// user
+Route::post('/user/signup', [UserController::class, 'signup']);
+Route::post('/user/login', [UserController::class, 'login']);
+
+Route::middleware([EnsureUserRequestIsValid::class])->group(
+    function () {
+        Route::get('/user/recordHistories', [RecordHistoryController::class, 'index']);
+        Route::post('/user/recordHistory', [RecordHistoryController::class, 'store']);
+    }
+);

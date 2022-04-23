@@ -13,12 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('record_histories', function (Blueprint $table) {
+        Schema::create('user_auth_tokens', function (Blueprint $table) {
             $table->id();
-            $table->integer("character_count");
-            $table->integer("word_count");
-            $table->string("input_string", 8000);
-            $table->json("detected_languages");
+            $table->string('token')->unique();
             $table->timestamps();
 
             $table->foreignId('user_id')
@@ -35,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('record_histories');
+        Schema::dropIfExists('user_auth_tokens');
     }
 };
